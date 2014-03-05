@@ -37,6 +37,10 @@ STAT 540 Project: Expression Profiling in Inflammatory Bowel Disease
 </tr>
 </tbody></table>
 
+### Definitions and Abbreviations
+
+IBD: Inflammatory bowel disease, CD: Crohn's disease, UC: ulcerative colitis.
+
 ### Background
 
 <!-- couple sentences of biological/scientific context
