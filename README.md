@@ -13,14 +13,14 @@ STAT 540 Project: Expression Profiling in Inflammatory Bowel Disease
 </thead><tbody>
 <tr>
 <td>Yue Sun</td>
-<td>Bioinformatics</td>
-<td>Biomedical and Multimedia Signal Processing Lab</td>
+<td>Bioinformatics(PhD)</td>
+<td>Jane Z. Wang</td>
 <td>Bioinformatics</td>
 </tr>
 <tr>
 <td>Yiming Zhang</td>
-<td>Electrical and Computer Engineering</td>
-<td>Biomedical and Multimedia Signal Processing Lab</td>
+<td>Electrical and Computer Engineering(MSc)</td>
+<td>Jane Z. Wang</td>
 <td>Computer Science</td>
 </tr>
 <tr>
@@ -89,7 +89,7 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 <td>Omar AlOmeir and Abrar Wafa</td>
 </tr>
 <tr>
-<td>PCA and Clustering.</td>
+<td>PCA and Clustering. Find a compact representation of the data, correct potential batch effects.</td>
 <td>Yiming Zhang</td>
 </tr>
 <tr>
@@ -97,8 +97,8 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 <td>Yue Sun</td>
 </tr>
 <tr>
-<td>Classification and Cross Validation.</td>
-<td>Yue Sun</td>
+<td>Classification and Cross Validation. Classify genes in different groups, define features in expressions among samples, test and improve the classifier using cross validation.</td>
+<td>Yue Sun and Yiming Zhang</td>
 </tr>
 </tbody></table>
 
