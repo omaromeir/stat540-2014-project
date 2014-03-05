@@ -60,8 +60,9 @@ Inflammatory bowel disease (IBD) is classified into two forms; Crohn's disease (
 0. Public data set.
 1. Differentially regulated genes.
 2. High-density cDNA microarrays?
-3. 31 samples, split into 3 groups: 11 control samples, 10 Crohn's disease patients, 10 ulcerative colitis patients. Each sample is from a different individual (patient or control).
-4. Biological? 34561 replicates.
+3. Platform :	GPL284, Human UniGene Set RZPD 1
+4. 31 samples, split into 3 groups: 11 control samples, 10 Crohn's disease patients, 10 ulcerative colitis patients. Each sample is from a different individual (patient or control).
+5. Biological? 34561 replicates.
 
 ### Work Plan
 
@@ -89,7 +90,7 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 <td>Omar AlOmeir and Abrar Wafa</td>
 </tr>
 <tr>
-<td>PCA and Clustering. Find a compact representation of the data, correct potential batch effects.</td>
+<td>PCA and Clustering. Find a compact representation of the data, correct potential batch effects[3].</td>
 <td>Yiming Zhang</td>
 </tr>
 <tr>
@@ -108,3 +109,5 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 [1] [Expression profiling in inflammatory bowel disease data set](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1710)
 
 [2] [Costello, Christine M., et al. "Dissection of the inflammatory bowel disease transcriptome using genome-wide cDNA microarrays." PLoS medicine 2.8 (2005): e199.](http://www.plosmedicine.org/article/info%3Adoi%2F10.1371%2Fjournal.pmed.0020199#pmed-0020199-g004)
+
+[3] [Chen, Chao, et al. "Removing batch effects in analysis of expression microarray data: an evaluation of six batch adjustment methods." PloS one 6.2 (2011): e17238.](http://www.plosone.org/article/fetchObject.action?uri=info%3Adoi%2F10.1371%2Fjournal.pone.0017238&representation=PDF)
