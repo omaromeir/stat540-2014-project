@@ -51,15 +51,17 @@ Inflammatory bowel disease (IBD) is classified into two forms; Crohn's disease (
 ### Data Description
 
 <!-- 
+0. Source of data?
 1. what is being measured?
 2. with what platform?
 3. how many samples? 
-4. are replicates biological or technical?-->
+4. are replicates biological or technical? How many replicates are there?-->
 
+0. Public data set.
 1. Differentially regulated genes.
 2. High-density cDNA microarrays?
 3. 31 samples, split into 3 groups: 11 control samples, 10 Crohn's disease patients, 10 ulcerative colitis patients. Each sample is from a different individual (patient or control).
-4. Biological?
+4. Biological? 34561 replicates.
 
 ### Work Plan
 
@@ -80,19 +82,23 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 </tr>
 <tr>
 <td>Quality Control. Exploring the data, looking for batch effects, outliers, et cetera.</td>
-<td>Omar AlOmeir</td>
+<td>Omar AlOmeir and Yiming Zhang</td>
 </tr>
 <tr>
 <td>Differential Expression Analysis to detect differentially regulated genes. Namely: normal controls vs at least one of the IBD subtypes, normal vs CD, normal vs UC</td>
 <td>Omar AlOmeir and Abrar Wafa</td>
 </tr>
 <tr>
-<td>Clustering.</td>
-<td>TBD</td>
+<td>PCA and Clustering.</td>
+<td>Yiming Zhang</td>
 </tr>
 <tr>
-<td>Cross Validation.</td>
-<td>TBD</td>
+<td>Enrichment Analysis.</td>
+<td>Yue Sun</td>
+</tr>
+<tr>
+<td>Classification and Cross Validation.</td>
+<td>Yue Sun</td>
 </tr>
 </tbody></table>
 
