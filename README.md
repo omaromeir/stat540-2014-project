@@ -46,7 +46,7 @@ IBD: Inflammatory bowel disease, CD: Crohn's disease, UC: ulcerative colitis.
 <!-- couple sentences of biological/scientific context
 motivate interest in a broad line of inquiry -->
 
-Inflammatory bowel disease (IBD) is classified into two forms; Crohn's disease (CD) and ulcerative colitis (UC). There is an apparent overlap between the two forms in clinical criteria, understanding of pathophysiology, and therapy. The study from which this data set originated [2] aimed to broaden the understanding of gene regulation events in CD and UC, and identify new genes involved in perpetuating inflammatory disease progression.
+Inflammatory bowel disease (IBD) is a group of inflammatory conditions of the colon and small intestineis. And, it is a complex disease which arises as a result of the interaction of environmental and genetic factors. There are two main forms of IBD: Crohn's disease (CD) and ulcerative colitis (UC). There is an apparent overlap between the two forms in clinical criteria, understanding of pathophysiology, and therapy.  The study from which this data set originated [2] aimed to broaden the understanding of gene regulation events in CD and UC at a genome-wide level, and identify novel unknown genes involved in perpetuating inflammatory disease progression. 
 
 ### Data Description
 
@@ -57,7 +57,7 @@ Inflammatory bowel disease (IBD) is classified into two forms; Crohn's disease (
 3. how many samples? 
 4. are replicates biological or technical? How many replicates are there?-->
 
-0. Public data set.
+0. Public data set (GEO accession number：GSE1710)[1].
 1. Differentially regulated genes.
 2. High-density cDNA microarrays?
 3. Platform :	GPL284, Human UniGene Set RZPD 1
@@ -94,15 +94,14 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 <td>Yiming Zhang</td>
 </tr>
 <tr>
-<td>Enrichment Analysis.</td>
-<td>Yue Sun</td>
-</tr>
-<tr>
 <td>Classification and Cross Validation. Classify genes in different groups, define features in expressions among samples, test and improve the classifier using cross validation.</td>
 <td>Yue Sun and Yiming Zhang</td>
 </tr>
 </tbody></table>
-
+<td>Gene Set Enrichment Analysis. Assign to functional groups based on classification by Gene Ontology </td>
+<td>Yue Sun</td>
+</tr>
+<tr>
 
 ### References
 
