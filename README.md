@@ -59,7 +59,7 @@ Inflammatory bowel disease (IBD) is a group of inflammatory conditions of the co
 
 We will be working on a public data set (GEO accession number：GSE1710)[1]. Our aim is to find Differentially regulated genes in High-density cDNA microarray data. The platform is GPL284, Human UniGene Set RZPD 1.
 
-The data is comprised of 31 samples, split into 3 groups: 11 control samples, 10 Crohn's disease patients, 10 ulcerative colitis patients. Each sample is from a different individual (patient or control).
+The data is comprised of 31 samples, split into 3 groups: 11 control samples, 10 Crohn's disease patients, and 10 ulcerative colitis patients. Each sample is from a different individual (patient or control).
 
 As far as we can tell there are 34561 biological replicates.
 
@@ -85,7 +85,7 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 <td>Omar AlOmeir</td>
 </tr>
 <tr>
-<td>Differential Expression Analysis to detect differentially regulated genes. Namely: normal controls vs at least one of the IBD subtypes, normal vs CD, normal vs UC. </td>
+<td>Differential Expression Analysis to detect differentially regulated genes using a linear model as implemented in limma. Namely: we will be looking for differential expression in normal controls vs at least one of the IBD subtypes, normal vs. CD, normal vs. UC, and UC vs. DC. </td>
 <td>Omar AlOmeir and Abrar Wafa</td>
 </tr>
 <tr>
