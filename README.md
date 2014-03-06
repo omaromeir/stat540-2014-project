@@ -59,7 +59,7 @@ Inflammatory bowel disease (IBD) is a group of inflammatory conditions of the co
 
 0. Public data set (GEO accession number：GSE1710)[1].
 1. Differentially regulated genes.
-2. High-density cDNA microarrays?
+2. High-density cDNA microarrays.
 3. Platform :	GPL284, Human UniGene Set RZPD 1
 4. 31 samples, split into 3 groups: 11 control samples, 10 Crohn's disease patients, 10 ulcerative colitis patients. Each sample is from a different individual (patient or control).
 5. Biological? 34561 replicates.
@@ -97,12 +97,11 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 <td>Classification and Cross Validation. Classify genes in different groups, define features in expressions among samples, test and improve the classifier using cross validation.</td>
 <td>Yue Sun and Yiming Zhang</td>
 </tr>
-</tbody></table>
+<tr>
 <td>Gene Set Enrichment Analysis. Assign to functional groups based on classification by Gene Ontology </td>
 <td>Yue Sun</td>
 </tr>
-<tr>
-
+</tbody></table>
 ### References
 
 [1] [Expression profiling in inflammatory bowel disease data set](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1710)
