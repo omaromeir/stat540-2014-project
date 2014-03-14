@@ -85,15 +85,19 @@ even better is to enhance with more specifics, e.g. you anticipate using a linea
 <td>Omar AlOmeir</td>
 </tr>
 <tr>
+<td>Correct potential batch effects. Use SVD to correct the potential batch effects.[3]</td>
+<td>Yue Sun and Yiming Zhang</td>
+</tr>
+<tr>
 <td>Differential Expression Analysis to detect differentially regulated genes using a linear model as implemented in limma. Namely: we will be looking for differential expression in normal controls vs at least one of the IBD subtypes, normal vs. CD, normal vs. UC, and UC vs. DC. </td>
 <td>Omar AlOmeir and Abrar Wafa</td>
 </tr>
 <tr>
-<td>PCA and Clustering. Find a compact representation of the data, correct potential batch effects [3].</td>
+<td>PCA and Clustering. Do PCA on genes to find a compact representation of the data. Do both sample clustering and gene clustering, then do partitioning and cluster visualization.</td>
 <td>Yiming Zhang</td>
 </tr>
 <tr>
-<td>Classification and Cross Validation. Classify genes in different groups, define features in expressions among samples, test and improve the classifier using cross validation.</td>
+<td>Classification and Cross Validation. Classify samples in different groups, define features in expressions among samples, build a classifier to predict disease status, test and improve the classifier using cross validation.</td>
 <td>Yue Sun and Yiming Zhang</td>
 </tr>
 <tr>
