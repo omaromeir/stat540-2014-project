@@ -61,7 +61,9 @@ We will be working on a public data set (GEO accession number：GSE1710)[1]. Our
 
 The data is comprised of 31 samples, split into 3 groups: 11 control samples, 10 Crohn's disease patients, and 10 ulcerative colitis patients. Each sample is from a different individual (patient or control).
 
-As far as we can tell there are no replicates, biological or technical.
+Other covariates in the data include sex and age of individuals.
+
+As far as we can tell there are no 11 replicates for the controls group, and 10 replicates for the other two groups. All replicates are biological.
 
 ### Work Plan
 
