@@ -5,14 +5,22 @@
 library(RColorBrewer)
 library(lattice)
 library(preprocessCore)
+library(impute)
 
 dat <- read.table("data/GSE1710-data.tsv")
 des <- readRDS("data/GSE1710-design.rds")
 
-dat <- na.exclude(dat)
-mat <- as.matrix(dat)
+# dealing with missing values
 
-# heatmap of the forst 100 rows
+# remove rows that contain more than 8 (25%) missing values
+dat <- dat[rowSums(is.na(dat))<=8,]
+# use knn to impute other NAs
+mat <- as.matrix(dat)
+mat <- impute.knn(mat)
+dat <- as.data.frame(mat$data)
+
+# heatmap of the first 100 rows
+mat <- as.matrix(dat)
 bluesFun <- colorRampPalette(brewer.pal(n = 9, "Blues"))
 heatmap(mat[1:100,], Rowv = NA, Colv = NA, col = bluesFun(256))
 
@@ -34,6 +42,7 @@ roDes <- subset(des, samples != "GSM29606")
 roDat <- dat[roDes$samples]
 heatmap(cor(as.matrix(roDat)), Rowv = NA, Colv = NA, scale = "none", col = bluesFun(256))
 boxplot(apply(cor(as.matrix(roDat)), 2, mean))
+which.min(apply(cor(as.matrix(roDat)), 2, mean))
 
 # normalizing the data
 nMat <- normalize.quantiles(as.matrix(roDat))
