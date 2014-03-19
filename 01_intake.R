@@ -32,7 +32,7 @@ saveRDS(des, file = "data/GSE1710-design.rds")
 
 # sanity checks
 all(Table(gsms[[2]])$ID_REF == rownames(dat))
-all(Table(gsms$GSM29595)$VALUE == dat$GSM29595)
+identical(as.numeric(Table(gsms$GSM29595)$VALUE), dat$GSM29595)
 all(colnames(dat) == names(gsms))
 str(des)
 summary(des$group)
