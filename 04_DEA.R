@@ -47,7 +47,7 @@ colnames(ebFit)
 # Use topTable to get the hits:
 hits <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
 str(hits) # we're getting 1283 hits
-write.table(hits, "data/groups-hits.tsv")
+write.table(hits, "data/groups-hits.tsv") # saving the resutls upon Yiming's request
 # explore hits
 stripplot(gExp ~ group | gene, prepareData(head(rownames(hits), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
 # explore non-hits
@@ -86,7 +86,7 @@ str(aghits) # from here we are getting 305 observations
 # Test for any effect of group:
 ghits <- topTable(aebFit, coef = grep("group", colnames(coef(aebFit))),  number = nrow(dat), p.value = 0.1)
 str(ghits) # from here we are getting 921 observations 
-write.table(ghits, "data/groupVsage-hits.tsv") # saved the resutls upon Yiming's request
+write.table(ghits, "data/groupVsage-hits.tsv") # saving the resutls upon Yiming's request
 # Test for any effect of age:
 ahits <- topTable(aebFit, coef = grep("age", colnames(coef(aebFit))),  number = nrow(dat), p.value = 0.1)
 str(ahits) # from here we are getting only 4 observations at the same threshold which means there is no significant effect for age
