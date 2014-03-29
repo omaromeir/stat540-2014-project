@@ -6,6 +6,7 @@ library(limma)
 library(lattice)
 library(car)
 
+
 dat <- read.table("../stat540-project/data/GSE1710-normalized-data.tsv")
 des <- readRDS("../stat540-project/data/GSE1710-outlier-removed-design.rds")
 
@@ -44,16 +45,30 @@ desMat <- model.matrix(~group, des)
 fit <- lmFit(dat, desMat)
 ebFit <- eBayes(fit)
 colnames(ebFit)
-# Use topTable to get the hits:
+
+# Use topTable to get the hits of all groups:
 hits <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
 str(hits) # we're getting 1283 hits
 write.table(hits, "data/groups-hits.tsv") # saving the resutls upon Yiming's request
-# explore hits
+
+# Test for any effect of CDgroup:
+CDhits <- topTable(ebFit, coef = grep("CD", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
+str(CDhits) # we have 1453 hits
+write.table(CDhits, "data/CD-hits.tsv")
+
+# Test for any effect of UCgroup:
+UChits <- topTable(ebFit, coef = grep("UC", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
+str(UChits) # we have 527 hits
+write.table(UChits, "data/UC-hits.tsv")
+
+# explore hits of all groups
 stripplot(gExp ~ group | gene, prepareData(head(rownames(hits), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
-# explore non-hits
+# explore non-hits of all groups
 allprobes <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat))
 stripplot(gExp ~ group | gene, prepareData(tail(rownames(allprobes ), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
 
+
+##############################################################################################################################################
 
 # Do it using 'cell means' instead of 'reference + treatment effects' to check our results:
 
@@ -82,14 +97,17 @@ aebFit <- eBayes(afit)
 colnames(aebFit)
 # Test for any effect of group and/or age:
 aghits <- topTable(aebFit, coef = c("groupCD", "groupUC", "agemiddleage", "ageold", "groupCD:agemiddleage", "groupUC:agemiddleage", "groupCD:ageold", "groupUC:ageold"), number = nrow(dat), p.value = 0.1)
-str(aghits) # from here we are getting 305 observations 
+str(aghits) # from here we are getting 305 observations, setting the threshold to 0.05, we get only 19 observations 
 # Test for any effect of group:
 ghits <- topTable(aebFit, coef = grep("group", colnames(coef(aebFit))),  number = nrow(dat), p.value = 0.1)
-str(ghits) # from here we are getting 921 observations 
+str(ghits) # from here we are getting 921 observations .. after setting threshold to 0.05, we get 183 observations
 write.table(ghits, "data/groupVsage-hits.tsv") # saving the resutls upon Yiming's request
 # Test for any effect of age:
 ahits <- topTable(aebFit, coef = grep("age", colnames(coef(aebFit))),  number = nrow(dat), p.value = 0.1)
 str(ahits) # from here we are getting only 4 observations at the same threshold which means there is no significant effect for age
+
+
+##############################################################################################################################################
 
 
 # using 'reference + treatment effects' fit to test for group and sex:
@@ -98,12 +116,12 @@ sfit <- lmFit(dat, sMat)
 sebFit <- eBayes(sfit)
 colnames(sebFit)
 # Test for any effect of group and/or sex:
-sghits <- topTable(sebFit, coef = c("groupCD", "groupUC", "sexmale", "groupCD:sexmale", "groupUC:sexmale"), number = nrow(dat), p.value = 0.1)
-str(sghits) # here we're getting 5096 observations
+sghits <- topTable(sebFit, coef = c("groupCD", "groupUC", "sexmale", "groupCD:sexmale", "groupUC:sexmale"), number = nrow(dat), p.value = 1e-2)
+str(sghits) # here we're getting 244 observations
 # Test for any effect of group:
-gHits <- topTable(sebFit, coef = grep("group", colnames(coef(sebFit))),  number = nrow(dat), p.value = 0.1)
-str(gHits) # here we're getting 5359 observations
+gHits <- topTable(sebFit, coef = grep("group", colnames(coef(sebFit))),  number = nrow(dat), p.value = 1e-2)
+str(gHits) # here we're getting 417 observations
 # Test for any effect of sex:
-shits <- topTable(sebFit, coef = grep("sex", colnames(coef(sebFit))),  number = nrow(dat), p.value = 0.1)
-str(shits) # here we are getting 219 observations
+shits <- topTable(sebFit, coef = grep("sex", colnames(coef(sebFit))),  number = nrow(dat), p.value = 1e-2)
+str(shits) # here we are getting 1 observation
 
