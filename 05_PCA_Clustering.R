@@ -60,21 +60,13 @@ ggplot(prinComp, aes(x=PC1, y=PC2,colour=Age))+geom_point()
 
 
 ##clustering 
-#rescale the rows in data to make later things easier
-
-sdat <- t(scale(t(dat)))
-str(sdat, max.level = 0, give.attr = FALSE)
-
-round(data.frame(avgBefore = rowMeans(head(dat)),
-                 avgAfter = rowMeans(head(sdat)),
-                 varBefore = apply(head(dat), 1, var),
-                 varAfter = apply(head(sdat), 1, var)), 2)
 
 # there is nothing useful in sample culstering analysis, so I ignore it 
 
 # gene clustering
 #Load the top hits data to do gene clustering
-
+hits <- read.table("data/groups-hits.tsv")
+topDat <- subset(dat, rownames(dat) %in% rownames(hits))
 #Hierarchical clustering
 geneC.dis <- dist(topDat, method = "euclidean")
 geneC.hc.a <- hclust(geneC.dis, method = "ward")
