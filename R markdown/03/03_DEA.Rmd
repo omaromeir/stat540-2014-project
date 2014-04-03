@@ -1,0 +1,204 @@
+### 01 Data intake
+### Created by: Abrar Wafa
+### Date: March 16, 2014
+
+
+```{r}
+library(limma)
+library(lattice)
+library(car)
+library(RColorBrewer)
+```
+
+Read the data: 
+```{r}
+dat <- read.table("../../data/GSE1710-normalized-data.tsv")
+des <- readRDS("../../data/GSE1710-outlier-removed-design.rds")
+```
+
+
+Separate age into groups:
+```{r}
+des$age <- as.numeric(levels(des$age))[as.integer(des$age)]
+young <- which(des$age <= 30)
+middleage <- which(des$age > 30 & des$age < 50)
+old <- which(des$age >= 50)
+des$age[young] <- "young"
+des$age[middleage] <- "middleage"
+des$age[old] <- "old"
+des$age <- as.factor(des$age)
+des$age <- recode(des$age, "",levels = c('young', 'middleage', 'old'))
+str(des)
+```
+
+
+Create function to extract genes:
+```{r}
+prepareData <- function(g) {
+  pDat0 <- data.frame()
+  for (i in 1:length(g)) {
+    pDat <- data.frame(des, gExp = as.vector(t(as.matrix(dat[g[i], ]))), 
+                       gene = g[i])
+    pDat0 <- rbind(pDat0, pDat)
+  }
+  pDat0
+}
+```
+
+Set up design matrix to get 'reference + treatment effects' fit to test for group only:
+i.e. testing: normal vs. CD, normal vs. UC, and UC vs. DC.
+```{r}
+desMat <- model.matrix(~group, des)
+# Fitting two-way ANOVA to all probesets at once:
+fit <- lmFit(dat, desMat)
+ebFit <- eBayes(fit)
+colnames(ebFit)
+```
+
+Use topTable to get the hits of all groups:
+```{r}
+hits <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
+# save the resutls
+write.table(hits, "data/groups-hits.tsv") 
+str(hits) 
+```
+There are 1283 probes that have a BH-adjusted p-value less than 1e-2.
+
+
+Explore hits of all groups:
+```{r}
+stripplot(gExp ~ group | gene, prepareData(head(rownames(hits), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+```
+
+Explore non-hits of all groups:
+```{r}
+allprobes <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat))
+stripplot(gExp ~ group | gene, prepareData(tail(rownames(allprobes ), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+```
+
+Display the top 50 probes in a heatmap:
+```{r}
+hit1 <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = 50)
+hGreys <- colorRampPalette(brewer.pal(n = 9, "Blues"))
+hit1<- dat[rownames(hit1), ]
+heatmap(as.matrix(hit1), Rowv = NA, Colv = NA, scale = "none", col = hGreys(256))
+```
+
+Test for any effect of CD group:
+```{r}
+CDhits <- topTable(ebFit, coef = grep("CD", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
+write.table(CDhits, "data/CD-hits.tsv")
+str(CDhits) 
+```
+There are 1453 probes that have a BH-adjusted p-value less than 1e-2.
+
+Explore hits of CD groups:
+```{r}
+stripplot(gExp ~ group | gene, prepareData(head(rownames(CDhits), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+```
+
+Display the top 50 probes in a heatmap:
+```{r}
+hits2 <- topTable(ebFit, coef = grep("CD", colnames(coef(ebFit))), number = 50)
+hit2 <- dat[rownames(hits2), ]
+heatmap(as.matrix(hit2), Rowv = NA, Colv = NA, scale = "none", col = hGreys(256))
+```
+
+
+Test for any effect of UC group:
+```{r}
+UChits <- topTable(ebFit, coef = grep("UC", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
+str(UChits)
+write.table(UChits, "data/UC-hits.tsv")
+```
+There are 527 probes that have a BH-adjusted p-value less than 1e-2.
+
+
+Explore hits of UC groups:
+```{r}
+stripplot(gExp ~ group | gene, prepareData(head(rownames(UChits), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+```
+
+
+
+Display the top 50 probes in a heatmap:
+```{r}
+hits3 <- topTable(ebFit, coef = grep("UC", colnames(coef(ebFit))), number = 50)
+hit3 <- dat[rownames(hits3), ]
+heatmap(as.matrix(hit3), Rowv = NA, Colv = NA, scale = "none", col = hGreys(256))
+```
+
+
+Using 'reference + treatment effects' fit to test for group and age:
+```{r}
+aMat <- model.matrix(~group*age, des)
+afit <- lmFit(dat, aMat)
+aebFit <- eBayes(afit)
+colnames(aebFit)
+```
+
+
+Test for any effect of group and/or age:
+```{r}
+aghits <- topTable(aebFit, coef = c("groupCD", "groupUC", "agemiddleage", "ageold", "groupCD:agemiddleage", "groupUC:agemiddleage", "groupCD:ageold", "groupUC:ageold"), number = nrow(dat), p.value = 0.1)
+str(aghits) 
+```
+There are 305 probes that have a BH-adjusted p-value less than 0.1.
+
+
+Test for any effect of group only:
+```{r}
+ghits <- topTable(aebFit, coef = grep("group", colnames(coef(aebFit))),  number = nrow(dat), p.value = 0.1)
+write.table(ghits, "data/groupVsage-hits.tsv")
+str(ghits)
+```
+There are 921 probes that have a BH-adjusted p-value less than 0.1.
+
+
+Test for any effect of age only:
+```{r}
+ahits <- topTable(aebFit, coef = grep("age", colnames(coef(aebFit))),  number = nrow(dat), p.value = 0.1)
+str(ahits) 
+```
+There are only 4 probes that have a BH-adjusted p-value less than 0.1 which means there is no significant effect for age.
+
+Explore hits of age only:
+```{r}
+stripplot(gExp ~ group | gene, prepareData(head(rownames(ahits), 4)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+```
+
+Use 'reference + treatment effects' fit to test for group and sex:
+```{r}
+sMat <- model.matrix(~group*sex, des)
+sfit <- lmFit(dat, sMat)
+sebFit <- eBayes(sfit)
+colnames(sebFit)
+```
+
+
+Test for any effect of group and/or sex:
+```{r}
+sghits <- topTable(sebFit, coef = c("groupCD", "groupUC", "sexmale", "groupCD:sexmale", "groupUC:sexmale"), number = nrow(dat), p.value = 1e-2)
+str(sghits)
+```
+There are 244 probes that have a BH-adjusted p-value less than 1e-2.
+
+Test for any effect of group only:
+```{r}
+gHits <- topTable(sebFit, coef = grep("group", colnames(coef(sebFit))),  number = nrow(dat), p.value = 1e-2)
+str(gHits)
+```
+There are 417 probes that have a BH-adjusted p-value less than 1e-2.
+
+
+Test for any effect of sex:
+```{r}
+shits <- topTable(sebFit, coef = grep("sex", colnames(coef(sebFit))),  number = nrow(dat), p.value = 1e-2)
+str(shits)
+```
+There is only 1 probe that have a BH-adjusted p-value less than 1e-2 which means there is no significant effect for sex.
+
+Explore hits of sex only:
+```{r}
+stripplot(gExp ~ group | gene, prepareData(head(rownames(ahits), 1)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+```
