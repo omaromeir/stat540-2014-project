@@ -1,71 +1,100 @@
-# Task 2: Quality control
-# created by Omar AlOmeir
-# date: March 18, 2014
+### Task 2: Quality control
+### created by Omar AlOmeir
+### date: March 18, 2014
 
+```{r}
 library(RColorBrewer)
 library(lattice)
 library(preprocessCore)
 library(impute)
+```
 
+Reading the data from the intake:
+```{r}
 dat <- read.table("data/GSE1710-data.tsv")
 des <- readRDS("data/GSE1710-design.rds")
 str(dat, max.level=0)
 str(des)
+```
 
-# heatmap of the first 100 rows before dealing with missing values
+heatmap of the first 100 rows before dealing with missing values:
+```{r fig.width=7, fig.height=6}
 mat <- as.matrix(dat)
 bluesFun <- colorRampPalette(brewer.pal(n = 9, "Blues"))
 heatmap(mat[1:100,], Rowv = NA, Colv = NA, col = bluesFun(256))
+```
 
-# dealing with missing values
-
+Dealing with missing values:
+```{r}
 # remove rows that contain more than 8 (25%) missing values
 dat <- dat[rowSums(is.na(dat))<=8,]
 str(dat, max.level=0)
+```
+We have `r nrow(dat)` rows left.
 
+```{r}
 # use knn to impute other NAs
 mat <- as.matrix(dat)
 mat <- impute.knn(mat)
 dat <- as.data.frame(mat$data)
 str(dat, max.level=0)
+```
 
-# heatmap of the first 100 rows
+Heatmap of the first 100 rows:
+```{r fig.width=7, fig.height=6}
 mat <- as.matrix(dat)
 bluesFun <- colorRampPalette(brewer.pal(n = 9, "Blues"))
 heatmap(mat[1:100,], Rowv = NA, Colv = NA, col = bluesFun(256))
+```
 
-# smaples correlation heatmap
+Smaples correlation heatmap:
+```{r fig.width=7, fig.height=6}
 sColors <- cm.colors(nrow(cor(mat)))
 heatmap(cor(mat), Rowv = NA, Colv = NA, scale = "none", col = bluesFun(256), ColSideColors = sColors, RowSideColors = sColors, margins = c(10, 10))
+```
 
-# boxplot of means of correlation to check for outliers
+Boxplot of means of correlation to check for outliers:
+```{r fig.width=7, fig.height=6}
 boxplot(apply(cor(mat), 2, mean))
 which.min(apply(cor(mat), 2, mean))
+```
 
-# GSM29606 has the lowest correlation of all, and can be removed as an outlier
+GSM29606 has the lowest correlation of all, and can be removed as an outlier.
+```{r fig.width=7, fig.height=6}
 outlier <- subset(des, samples == "GSM29606")
 olGroup <- subset(des, group == outlier$group & sex == outlier$sex)
 splom(dat[olGroup$samples])
+```
 
-# removing the outlier
+Removing the outlier:
+```{r fig.width=7, fig.height=6}
 roDes <- subset(des, samples != "GSM29606")
 roDat <- dat[roDes$samples]
 heatmap(cor(as.matrix(roDat)), Rowv = NA, Colv = NA, scale = "none", col = bluesFun(256))
 boxplot(apply(cor(as.matrix(roDat)), 2, mean))
 which.min(apply(cor(as.matrix(roDat)), 2, mean))
+```
 
-# a boxplot of data before normalization
+A boxplot of the data before normalization:
+```{r fig.width=7, fig.height=6}
 boxplot(roDat, pch = ".", ylab = "Expression level", las = 3)
+```
 
-# normalizing the data
+Normalizing the data, using quantile normalization:
+```{r}
 nMat <- normalize.quantiles(as.matrix(roDat))
 colnames(nMat) <- colnames(as.matrix(roDat))
 rownames(nMat) <- rownames(as.matrix(roDat))
 nDat <- as.data.frame(nMat)
+```
 
-# a boxplot of data before normalization
+A boxplot of the normalized data:
+```{r fig.width=7, fig.height=6}
 boxplot(nDat, pch = ".", ylab = "Expression level", las = 3)
+```
 
-# saving the normalized data without the outlier
+Saving the normalized data without the outlier:
+```{r}
 write.table(nDat, "data/GSE1710-normalized-data.tsv")
 saveRDS(roDes, "data/GSE1710-outlier-removed-design.rds")
+```
