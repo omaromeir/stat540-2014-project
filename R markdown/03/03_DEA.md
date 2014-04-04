@@ -1,6 +1,6 @@
-### 01 Data intake
+### 03 Differential Expression Analysis
 ### Created by: Abrar Wafa
-### Date: March 16, 2014
+### Date: April 3, 2014
 
 
 
@@ -61,8 +61,13 @@ prepareData <- function(g) {
 ```
 
 
-Set up design matrix to get 'reference + treatment effects' fit to test for group only:
-i.e. testing: normal vs. CD, normal vs. UC, and UC vs. DC.
+The used linear model is the ANOVA style, 'reference + treatment effects' parametrization:
+
+\(Y_{ij}=\theta + \tau_i + \varepsilon_{ij} \) where \(\tau_1 = 0 \).
+
+\(\mu_{NC}=\theta,  \mu_{CD}=\theta + \tau_2, \) and \(\mu_{UC}=\theta + \tau_3 \).
+
+
 
 ```r
 desMat <- model.matrix(~group, des)
@@ -77,7 +82,8 @@ colnames(ebFit)
 ```
 
 
-Use topTable to get the hits of all groups:
+
+We will first use this model to test if all the means of the three genotypes are the same, if not, which genes have differential expression. In other words we will be testing the following null hypothesis: \(\mu_{CD} = \mu_{UC} \).
 
 ```r
 hits <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat), 
@@ -115,7 +121,7 @@ There are 1283 probes that have a BH-adjusted p-value less than 1e-2.
 Explore hits of all groups:
 
 ```r
-stripplot(gExp ~ group | gene, prepareData(head(rownames(hits), 6)), jitter.data = TRUE, 
+stripplot(gExp ~ group | gene, prepareData(head(rownames(hits), 3)), jitter.data = TRUE, 
     auto.key = TRUE, type = c("p", "a"), grid = TRUE)
 ```
 
@@ -126,7 +132,7 @@ Explore non-hits of all groups:
 
 ```r
 allprobes <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat))
-stripplot(gExp ~ group | gene, prepareData(tail(rownames(allprobes), 6)), jitter.data = TRUE, 
+stripplot(gExp ~ group | gene, prepareData(tail(rownames(allprobes), 3)), jitter.data = TRUE, 
     auto.key = TRUE, type = c("p", "a"), grid = TRUE)
 ```
 
@@ -145,7 +151,9 @@ heatmap(as.matrix(hit1), Rowv = NA, Colv = NA, scale = "none", col = hGreys(256)
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 
-Test for any effect of CD group:
+
+
+We then use the same model to test for any effect of CD group by specifying the coefficient. In other words we will be testing the following null hypothesis: \(\mu_{CD} = 0 \).
 
 ```r
 CDhits <- topTable(ebFit, coef = grep("CD", colnames(coef(ebFit))), number = nrow(dat), 
@@ -180,7 +188,7 @@ There are 1453 probes that have a BH-adjusted p-value less than 1e-2.
 Explore hits of CD groups:
 
 ```r
-stripplot(gExp ~ group | gene, prepareData(head(rownames(CDhits), 6)), jitter.data = TRUE, 
+stripplot(gExp ~ group | gene, prepareData(head(rownames(CDhits), 3)), jitter.data = TRUE, 
     auto.key = TRUE, type = c("p", "a"), grid = TRUE)
 ```
 
@@ -199,7 +207,7 @@ heatmap(as.matrix(hit2), Rowv = NA, Colv = NA, scale = "none", col = hGreys(256)
 
 
 
-Test for any effect of UC group:
+Finally, we use the same model to test for any effect of UC group by specifying the coefficient. In other words we will be testing the following null hypothesis: \(\mu_{UC} = 0 \).
 
 ```r
 UChits <- topTable(ebFit, coef = grep("UC", colnames(coef(ebFit))), number = nrow(dat), 
@@ -235,7 +243,7 @@ There are 527 probes that have a BH-adjusted p-value less than 1e-2.
 Explore hits of UC groups:
 
 ```r
-stripplot(gExp ~ group | gene, prepareData(head(rownames(UChits), 6)), jitter.data = TRUE, 
+stripplot(gExp ~ group | gene, prepareData(head(rownames(UChits), 3)), jitter.data = TRUE, 
     auto.key = TRUE, type = c("p", "a"), grid = TRUE)
 ```
 
