@@ -61,7 +61,10 @@ colnames(ebFit)
 ```
 
 
-We will first use this model to test if all the means of the three genotypes are the same, if not, which genes have differential expression. In other words we will be testing the following null hypothesis: \(\mu_{CD} = \mu_{UC} \).
+We will first use this model to test if all the means of the three genotypes are the same, if not, which genes have differential expression. In other words we will be testing the following null hypothesis:
+
+\(\mu_{NC} = \mu_{CD} = \mu_{UC} \)
+
 ```{r}
 hits <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
 # save the resutls
@@ -92,49 +95,19 @@ heatmap(as.matrix(hit1), Rowv = NA, Colv = NA, scale = "none", col = hGreys(256)
 
 
 
-We then use the same model to test for any effect of CD group by specifying the coefficient. In other words we will be testing the following null hypothesis: \(\mu_{CD} = 0 \).
+We then use 'cell means' model to test for any effect of CD group vs UC group. In other words we will be testing the following null hypothesis: \(\mu_{CD} = \mu_{UC} \).
 ```{r}
-CDhits <- topTable(ebFit, coef = grep("CD", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
-write.table(CDhits, "data/CD-hits.tsv")
-str(CDhits) 
+# Set up design matrix to get 'cell means' fit:
+cMat <- model.matrix(~group+0, des)
+cFit <- lmFit(dat, cMat)
+contMatrix <- makeContrasts(CDvsUC = groupUC - groupCD,  levels = cMat)
+fitCont <- contrasts.fit(cFit, contMatrix)
+ebFitCont <- eBayes(fitCont)
+contHits <- topTable(ebFitCont, number = nrow(dat),  p.value=1e-2)
+str(contHits)
 ```
-There are 1453 probes that have a BH-adjusted p-value less than 1e-2.
+No hits were found
 
-Explore hits of CD groups:
-```{r}
-stripplot(gExp ~ group | gene, prepareData(head(rownames(CDhits), 3)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
-```
-
-Display the top 50 probes in a heatmap:
-```{r}
-hits2 <- topTable(ebFit, coef = grep("CD", colnames(coef(ebFit))), number = 50)
-hit2 <- dat[rownames(hits2), ]
-heatmap(as.matrix(hit2), Rowv = NA, Colv = NA, scale = "none", col = hGreys(256))
-```
-
-
-Finally, we use the same model to test for any effect of UC group by specifying the coefficient. In other words we will be testing the following null hypothesis: \(\mu_{UC} = 0 \).
-```{r}
-UChits <- topTable(ebFit, coef = grep("UC", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
-str(UChits)
-write.table(UChits, "data/UC-hits.tsv")
-```
-There are 527 probes that have a BH-adjusted p-value less than 1e-2.
-
-
-Explore hits of UC groups:
-```{r}
-stripplot(gExp ~ group | gene, prepareData(head(rownames(UChits), 3)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
-```
-
-
-
-Display the top 50 probes in a heatmap:
-```{r}
-hits3 <- topTable(ebFit, coef = grep("UC", colnames(coef(ebFit))), number = 50)
-hit3 <- dat[rownames(hits3), ]
-heatmap(as.matrix(hit3), Rowv = NA, Colv = NA, scale = "none", col = hGreys(256))
-```
 
 
 Using 'reference + treatment effects' fit to test for group and age:
