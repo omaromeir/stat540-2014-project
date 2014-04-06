@@ -48,6 +48,7 @@ colnames(ebFit)
 
 # Use topTable to get the hits of all groups:
 hits <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat), p.value=1e-2)
+(hits)
 str(hits) # we're getting 1283 hits
 write.table(hits, "data/groups-hits.tsv") # saving the resutls upon Yiming's request
 
@@ -61,31 +62,24 @@ UChits <- topTable(ebFit, coef = grep("UC", colnames(coef(ebFit))), number = nro
 str(UChits) # we have 527 hits
 write.table(UChits, "data/UC-hits.tsv")
 
-# explore hits of all groups
-stripplot(gExp ~ group | gene, prepareData(head(rownames(hits), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+# explore hits of all groups 
+stripplot(gExp ~ group | gene, prepareData(c("28I19", "83C07", "33F10", "18B09")), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE, asp =1)
 # explore non-hits of all groups
 allprobes <- topTable(ebFit, coef = grep("group", colnames(coef(ebFit))), number = nrow(dat))
-stripplot(gExp ~ group | gene, prepareData(tail(rownames(allprobes ), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+stripplot(gExp ~ group | gene, prepareData(tail(rownames(allprobes ), 4)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE, asp=1)
 
 
 ##############################################################################################################################################
 
-# Do it using 'cell means' instead of 'reference + treatment effects' to check our results:
-
-# Set up design matrix to get 'cell means' fit to test for group only:
+# Use 'cell means' to test for differentially expressed genes between CD and UC:
+# Set up design matrix to get 'cell means' fit:
 cMat <- model.matrix(~group+0, des)
 cFit <- lmFit(dat, cMat)
-colnames(cFit)
-contMatrix <- makeContrasts(NCvsDC = groupCD - groupNC, NCvsUC = groupUC - groupNC, CDvsUC = groupUC - groupCD, levels = cMat)
+contMatrix <- makeContrasts(CDvsUC = groupUC - groupCD,  levels = cMat)
 fitCont <- contrasts.fit(cFit, contMatrix)
 ebFitCont <- eBayes(fitCont)
 contHits <- topTable(ebFitCont, number = nrow(dat),  p.value=1e-2)
-str(contHits) # we're getting 1283 hits (same as previous method)
-# explore hits
-stripplot(gExp ~ group | gene, prepareData(head(rownames(contHits), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
-# explore non-hits
-allProbes <- topTable(ebFitCont, number = nrow(dat))
-stripplot(gExp ~ group | gene, prepareData(tail(rownames(allProbes), 6)), jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), grid = TRUE)
+str(contHits) # we're getting no hits
 
 ##############################################################################################################################################
 
