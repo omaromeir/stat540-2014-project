@@ -7,10 +7,24 @@ library(lattice)
 library(preprocessCore)
 library(impute)
 
+# function to extract genes
+prepareData <- function(g) {
+  pDat0 <- data.frame()
+  for (i in 1:length(g)) {
+    pDat <- data.frame(des, gExp = as.vector(t(as.matrix(dat[g[i], ]))), 
+                       gene = g[i])
+    pDat0 <- rbind(pDat0, pDat)
+  }
+  pDat0
+}
+
 dat <- read.table("data/GSE1710-data.tsv")
 des <- readRDS("data/GSE1710-design.rds")
 str(dat, max.level=0)
 str(des)
+
+# Plot two random genes
+stripplot(gExp ~ group | gene, prepareData(sample(rownames(dat),2)), group = sex, jitter.data = TRUE, auto.key = TRUE, type = c("p", "a"), asp =1, grid = TRUE)
 
 # heatmap of the first 100 rows before dealing with missing values
 mat <- as.matrix(dat)
@@ -33,6 +47,10 @@ str(dat, max.level=0)
 mat <- as.matrix(dat)
 bluesFun <- colorRampPalette(brewer.pal(n = 9, "Blues"))
 heatmap(mat[1:100,], Rowv = NA, Colv = NA, col = bluesFun(256))
+
+# density plot of groups
+gDat <- data.frame(des, gExp = as.vector(t(as.matrix(dat[c(1:100), ]))))
+densityplot(~ gExp, gDat, groups = group, auto.key = TRUE, n=400, type = "p", plot.points = FALSE, grid = TRUE)
 
 # smaples correlation heatmap
 sColors <- cm.colors(nrow(cor(mat)))
