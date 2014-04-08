@@ -54,7 +54,7 @@ splits <- GenerateLearningsets(y = train.des$group, method = "CV", fold = 4,
 ## Loop for feature selection and modeling
 
 ##Here we choose top-300 limma genes
-negens <- 300
+ngenes <- 300
 nmethod <- 6
 pr.err <- matrix(-1, nfold, nmethod, dimnames = list(paste0("Fold", 1:nfold), 
         c("1NN", "5NN", "10NN", "15NN", "LDA", "SVM")))
@@ -148,8 +148,30 @@ box()
 
 ##Testing the selected model
 # LDA
-m.lda <- lda(x = t(traindat.fold), group = trainclass.fold)
+limma.dat <- as.data.frame(train.dat)
+desMat <- model.matrix(~train.des$group, limma.dat)  #design matrix
+trainFit <- lmFit(limma.dat, desMat)
+eBtrainFit <- eBayes(trainFit)
+
+# top-300 limma genes
+top.fold <- topTable(eBtrainFit, coef = which(colnames(coef(trainFit)) != 
+                                                "(Intercept)"), n = 300, sort.by = "F")
+
+# Retain the top-300 limma genes from the train and test sets
+traindat.fold <- train.dat[rownames(top.fold), ]
+testdat.fold <- test.dat[rownames(top.fold), ]
+#lda
+m.lda <- lda(x = t(traindat.fold), group = train.des$group)
 yhat.lda <- predict(m.lda, newdata = t(testdat.fold))$class
-pr.err.lda <- mean(testclass.fold != yhat.lda)
+pr.err.lda <- mean(test.des$group != yhat.lda)
 pr.err.lda
+#svm
+m.svm <- svm(x = t(traindat.fold), y = train.des$group, cost = 1, type = "C-classification", 
+             kernel = "linear")
+pr.svm <- predict(m.svm, newdata = t(testdat.fold))
+
+pr.err.svm <- mean(pr.svm != test.des$group)
+pr.err.svm
+
+
 

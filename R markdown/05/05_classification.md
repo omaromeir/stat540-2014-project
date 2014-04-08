@@ -325,8 +325,9 @@ for (ngenes in c(100, 300, 500, 1000)) {
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
-From this plot, we can see that LDA method with 300 genes as feature has the lowest error rate.
-### Testing the selected model, i.e. LDA with 300 top-hits
+We found LDA or SVM with 300 genes as features could give us promising results. So we use the two method to train the full training data and test on full test data.
+### Testing the selected model
+
 
 ```r
 negens <- 300
@@ -440,8 +441,27 @@ box()
 
 
 
+Take top-300 genes as features,
+
 ```r
-m.lda <- lda(x = t(traindat.fold), group = trainclass.fold)
+limma.dat <- as.data.frame(train.dat)
+desMat <- model.matrix(~train.des$group, limma.dat)  #design matrix
+trainFit <- lmFit(limma.dat, desMat)
+eBtrainFit <- eBayes(trainFit)
+
+# top-300 limma genes
+top.fold <- topTable(eBtrainFit, coef = which(colnames(coef(trainFit)) != "(Intercept)"), 
+    n = 300, sort.by = "F")
+
+# Retain the top-300 limma genes from the train and test sets
+traindat.fold <- train.dat[rownames(top.fold), ]
+testdat.fold <- test.dat[rownames(top.fold), ]
+```
+
+#### LDA
+
+```r
+m.lda <- lda(x = t(traindat.fold), group = train.des$group)
 ```
 
 ```
@@ -450,14 +470,30 @@ m.lda <- lda(x = t(traindat.fold), group = trainclass.fold)
 
 ```r
 yhat.lda <- predict(m.lda, newdata = t(testdat.fold))$class
-pr.err.lda <- mean(testclass.fold != yhat.lda)
+pr.err.lda <- mean(test.des$group != yhat.lda)
 pr.err.lda
 ```
 
 ```
-## [1] 0.1111
+## [1] 0.5
 ```
 
-So we get the error rate 0.1111, it's a very promising results. But further experiment with more test samples are expected to further verify the results.
+#### SVM
+
+```r
+
+m.svm <- svm(x = t(traindat.fold), y = train.des$group, cost = 1, type = "C-classification", 
+    kernel = "linear")
+pr.svm <- predict(m.svm, newdata = t(testdat.fold))
+
+pr.err.svm <- mean(pr.svm != test.des$group)
+pr.err.svm
+```
+
+```
+## [1] 0.25
+```
+
+So we get the error rate 0.25, it's a promising result. We could use the classifier to perdict but still cannot rely on it. Further experiment with more test samples are expected to further verify the results.
 
 
